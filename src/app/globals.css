@@ -1,0 +1,938 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* German Light Theme - Inspired by German Flag Colors */
+    --background: 0 0% 100%;
+    --foreground: 0 0% 10%;
+    --card: 0 0% 98%;
+    --card-foreground: 0 0% 15%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 0 0% 10%;
+    --primary: 0 79% 41%; /* German Red */
+    --primary-foreground: 0 0% 100%;
+    --secondary: 45 100% 48%; /* German Gold */
+    --secondary-foreground: 0 0% 10%;
+    --muted: 0 0% 96%;
+    --muted-foreground: 0 0% 45%;
+    --accent: 45 100% 55%; /* Bright German Gold */
+    --accent-foreground: 0 0% 10%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 0 0% 90%;
+    --input: 0 0% 96%;
+    --ring: 0 79% 41%;
+    --radius: 1rem;
+
+    /* German Theme specific variables */
+    --glass-bg: rgba(0, 0, 0, 0.02);
+    --glass-border: rgba(0, 0, 0, 0.08);
+    --glass-hover: rgba(255, 255, 255, 0.8); /* Белый фон при наведении */
+    --blur-strength: 12px;
+
+    /* German Flag inspired gradients */
+    --gradient-from: 0 0% 10%; /* Black */
+    --gradient-via: 0 79% 41%; /* Red */
+    --gradient-to: 45 100% 48%; /* Gold */
+
+    /* German theme colors */
+    --german-black: 0 0% 10%;
+    --german-red: 0 79% 41%;
+    --german-gold: 45 100% 48%;
+    --german-light-gold: 45 100% 55%;
+    --german-dark-red: 0 79% 35%;
+  }
+
+  .dark {
+    /* Pink/Purple Dark Theme */
+    --background: 240 10% 4%;
+    --foreground: 0 0% 95%;
+    --card: 240 10% 8%;
+    --card-foreground: 0 0% 95%;
+    --popover: 240 10% 8%;
+    --popover-foreground: 0 0% 95%;
+    --primary: 300 100% 70%; /* Pink primary */
+    --primary-foreground: 240 10% 4%;
+    --secondary: 270 100% 80%; /* Purple secondary */
+    --secondary-foreground: 240 10% 4%;
+    --muted: 240 6% 15%;
+    --muted-foreground: 240 5% 65%;
+    --accent: 320 100% 75%; /* Bright pink accent */
+    --accent-foreground: 240 10% 4%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 240 6% 20%;
+    --input: 240 6% 15%;
+    --ring: 300 100% 70%;
+
+    /* Dark theme glass variables */
+    --glass-bg: rgba(255, 255, 255, 0.05);
+    --glass-border: rgba(255, 255, 255, 0.1);
+    --glass-hover: rgba(0, 0, 0, 0.3); /* Темный фон при наведении */
+    --blur-strength: 20px;
+
+    /* Dark theme gradients - Pink/Purple theme */
+    --gradient-from: 280 100% 70%; /* Purple */
+    --gradient-via: 300 100% 70%; /* Pink */
+    --gradient-to: 320 100% 75%; /* Bright pink */
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+    min-height: 100vh;
+    position: relative;
+    overflow-x: hidden;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  /* Light theme background - German inspired */
+  body {
+    background: linear-gradient(135deg,
+      #ffffff 0%,
+      #fafafa 25%,
+      #f7f7f7 50%,
+      #fafafa 75%,
+      #ffffff 100%
+    );
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: -1;
+    background:
+      radial-gradient(circle at 25% 25%, rgba(220, 38, 38, 0.02) 0%, transparent 50%),
+      radial-gradient(circle at 75% 75%, rgba(245, 158, 11, 0.02) 0%, transparent 50%),
+      radial-gradient(circle at 50% 50%, rgba(26, 26, 26, 0.01) 0%, transparent 50%);
+  }
+
+  /* Dark theme backgrounds */
+  .dark body {
+    background: linear-gradient(135deg,
+      #0A0A0B 0%,
+      #0F0F10 25%,
+      #141416 50%,
+      #0F0F10 75%,
+      #0A0A0B 100%
+    );
+  }
+
+  .dark body::before {
+    background:
+      radial-gradient(circle at 25% 25%, rgba(139, 92, 246, 0.03) 0%, transparent 50%),
+      radial-gradient(circle at 75% 75%, rgba(99, 102, 241, 0.03) 0%, transparent 50%),
+      radial-gradient(circle at 50% 50%, rgba(217, 70, 239, 0.03) 0%, transparent 50%);
+  }
+
+  html {
+    scroll-behavior: auto;
+  }
+}
+
+/* Glassmorphism Components */
+@layer components {
+  .glass {
+    background: var(--glass-bg);
+    backdrop-filter: blur(var(--blur-strength));
+    border: 1px solid var(--glass-border);
+    box-shadow:
+      0 4px 24px rgba(0, 0, 0, 0.08),
+      inset 0 1px 0 rgba(0, 0, 0, 0.05);
+  }
+
+  .glass-hover {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .glass-hover:hover {
+    background: var(--glass-hover);
+    border-color: rgba(0, 0, 0, 0.05);
+    transform: translateY(-2px);
+    box-shadow:
+      0 8px 32px rgba(0, 0, 0, 0.08),
+      0 2px 8px rgba(0, 0, 0, 0.04);
+  }
+
+  .glass-card {
+    @apply glass glass-hover rounded-2xl p-6;
+  }
+
+  .glass-card-no-padding {
+    @apply glass glass-hover rounded-2xl;
+  }
+
+  .glass-nav {
+    @apply glass rounded-full px-6 py-3;
+    background: rgba(0, 0, 0, 0.02);
+  }
+
+  .gradient-text {
+    @apply bg-gradient-to-r bg-clip-text text-transparent;
+    background-image: linear-gradient(135deg,
+      hsl(0, 0%, 10%),
+      hsl(0, 79%, 41%),
+      hsl(45, 100%, 48%)
+    );
+  }
+
+  /* Dark theme glass overrides */
+  .dark .glass {
+    box-shadow:
+      0 4px 32px rgba(0, 0, 0, 0.3),
+      inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  }
+
+  .dark .glass-hover:hover {
+    border-color: rgba(255, 255, 255, 0.15);
+    box-shadow:
+      0 8px 40px rgba(0, 0, 0, 0.25),
+      0 2px 10px rgba(255, 255, 255, 0.05);
+  }
+
+  .dark .glass-nav {
+    background: rgba(255, 255, 255, 0.03);
+  }
+
+  .dark .gradient-text {
+    @apply bg-gradient-to-r bg-clip-text text-transparent;
+    background-image: linear-gradient(135deg,
+      hsl(220, 100%, 70%),
+      hsl(260, 100%, 70%),
+      hsl(300, 100%, 70%)
+    );
+  }
+
+  .gradient-border {
+    position: relative;
+    background: var(--glass-bg);
+    border-radius: 1rem;
+  }
+
+  .gradient-border::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    padding: 1px;
+    background: linear-gradient(135deg,
+      hsl(var(--gradient-from)),
+      hsl(var(--gradient-via)),
+      hsl(var(--gradient-to))
+    );
+    border-radius: inherit;
+    mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    mask-composite: exclude;
+  }
+}
+
+/* Custom animations */
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-20px) rotate(180deg);
+  }
+}
+
+@keyframes glow {
+  0%, 100% {
+    opacity: 0.5;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.8;
+    transform: scale(1.05);
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% center;
+  }
+  100% {
+    background-position: 200% center;
+  }
+}
+
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
+
+.animate-glow {
+  animation: glow 4s ease-in-out infinite;
+}
+
+.animate-shimmer {
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.1),
+    transparent
+  );
+  background-size: 200% 100%;
+  animation: shimmer 2s ease-in-out infinite;
+}
+
+.animation-delay-1000 {
+  animation-delay: 1s;
+}
+
+.animation-delay-2000 {
+  animation-delay: 2s;
+}
+
+.animation-delay-3000 {
+  animation-delay: 3s;
+}
+
+/* Дополнительные микроанимации для нового дизайна */
+@keyframes bounce-in {
+  0% {
+    transform: scale(0.3);
+    opacity: 0;
+  }
+  50% {
+    transform: scale(1.05);
+    opacity: 0.8;
+  }
+  70% {
+    transform: scale(0.9);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes slide-up {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes pulse-german {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.4);
+  }
+  50% {
+    box-shadow: 0 0 0 10px rgba(220, 38, 38, 0);
+  }
+}
+
+.animate-bounce-in {
+  animation: bounce-in 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+.animate-slide-up {
+  animation: slide-up 0.5s ease-out;
+}
+
+.animate-pulse-german {
+  animation: pulse-german 2s infinite;
+}
+
+.animation-delay-100 {
+  animation-delay: 0.1s;
+}
+
+.animation-delay-200 {
+  animation-delay: 0.2s;
+}
+
+.animation-delay-300 {
+  animation-delay: 0.3s;
+}
+
+/* Улучшенные hover эффекты */
+.hover-lift {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.hover-lift:hover {
+  transform: translateY(-4px) scale(1.02);
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+}
+
+/* Загрузочные скелетоны */
+@keyframes skeleton-loading {
+  0% {
+    background-position: -200px 0;
+  }
+  100% {
+    background-position: calc(200px + 100%) 0;
+  }
+}
+
+.skeleton {
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200px 100%;
+  animation: skeleton-loading 1.5s infinite;
+}
+
+.dark .skeleton {
+  background: linear-gradient(90deg, #2a2a2a 25%, #1a1a1a 50%, #2a2a2a 75%);
+  background-size: 200px 100%;
+}
+
+/* Card flip animation */
+.perspective {
+  perspective: 1200px;
+  height: auto;
+  min-height: 400px; /* Увеличиваем минимальную высоту */
+}
+
+.perspective-1000 {
+  perspective: 1000px;
+}
+
+.card-flip-container {
+  position: relative;
+  width: 100%;
+  min-height: 400px; /* Минимальная высота вместо фиксированной */
+  height: auto; /* Автоматическая высота */
+  transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  transform-style: preserve-3d;
+  cursor: pointer;
+}
+
+.card-flip-container.flipped {
+  transform: rotateY(180deg);
+}
+
+.card-face {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  backface-visibility: hidden;
+  border-radius: 1rem;
+  overflow: hidden;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+  transition: box-shadow 0.3s ease;
+}
+
+.card-face:hover {
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
+}
+
+.card-front {
+  z-index: 2;
+  transform: rotateY(0deg);
+}
+
+.card-back {
+  z-index: 1;
+  transform: rotateY(180deg);
+}
+
+/* Group hover effects for card container */
+.group:hover .card-flip-container {
+  transform: scale(1.02) rotateY(var(--flip-rotation, 0deg));
+}
+
+.group:hover .card-flip-container.flipped {
+  transform: scale(1.02) rotateY(180deg);
+}
+
+/* Disable hover scale during flip animation */
+.card-flip-container {
+  --flip-rotation: 0deg;
+}
+
+.card-flip-container.flipped {
+  --flip-rotation: 180deg;
+}
+
+/* Новые классы для улучшенных кнопок */
+@keyframes gradient-x {
+  0%, 100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+.animate-gradient-x {
+  background-size: 200% 200%;
+  animation: gradient-x 3s ease infinite;
+}
+
+.bg-size-200 {
+  background-size: 200% 200%;
+}
+
+.shadow-3xl {
+  box-shadow: 0 35px 60px -12px rgba(0, 0, 0, 0.25);
+}
+
+.animation-delay-150 {
+  animation-delay: 150ms;
+}
+
+/* Дополнительные улучшения для темной темы */
+.dark .shadow-3xl {
+  box-shadow: 0 35px 60px -12px rgba(0, 0, 0, 0.5);
+}
+
+/* German Gradient Button Styles */
+@layer base {
+  @property --pos-x {
+    syntax: '<percentage>';
+    initial-value: 11.14%;
+    inherits: false;
+  }
+
+  @property --pos-y {
+    syntax: '<percentage>';
+    initial-value: 140%;
+    inherits: false;
+  }
+
+  @property --spread-x {
+    syntax: '<percentage>';
+    initial-value: 150%;
+    inherits: false;
+  }
+
+  @property --spread-y {
+    syntax: '<percentage>';
+    initial-value: 180.06%;
+    inherits: false;
+  }
+
+  @property --color-1 {
+    syntax: '<color>';
+    initial-value: #000;
+    inherits: false;
+  }
+
+  @property --color-2 {
+    syntax: '<color>';
+    initial-value: #1a1a1a;
+    inherits: false;
+  }
+
+  @property --color-3 {
+    syntax: '<color>';
+    initial-value: #dc2626;
+    inherits: false;
+  }
+
+  @property --color-4 {
+    syntax: '<color>';
+    initial-value: #f59e0b;
+    inherits: false;
+  }
+
+  @property --color-5 {
+    syntax: '<color>';
+    initial-value: #fbbf24;
+    inherits: false;
+  }
+
+  @property --border-angle {
+    syntax: '<angle>';
+    initial-value: 20deg;
+    inherits: true;
+  }
+
+  @property --border-color-1 {
+    syntax: '<color>';
+    initial-value: hsla(0, 75%, 60%, 0.2);
+    inherits: true;
+  }
+
+  @property --border-color-2 {
+    syntax: '<color>';
+    initial-value: hsla(45, 95%, 50%, 0.75);
+    inherits: true;
+  }
+
+  @property --stop-1 {
+    syntax: '<percentage>';
+    initial-value: 37.35%;
+    inherits: false;
+  }
+
+  @property --stop-2 {
+    syntax: '<percentage>';
+    initial-value: 61.36%;
+    inherits: false;
+  }
+
+  @property --stop-3 {
+    syntax: '<percentage>';
+    initial-value: 78.42%;
+    inherits: false;
+  }
+
+  @property --stop-4 {
+    syntax: '<percentage>';
+    initial-value: 89.52%;
+    inherits: false;
+  }
+
+  @property --stop-5 {
+    syntax: '<percentage>';
+    initial-value: 100%;
+    inherits: false;
+  }
+}
+
+@layer components {
+  .gradient-button {
+    @apply relative appearance-none cursor-pointer;
+    background: radial-gradient(
+      var(--spread-x) var(--spread-y) at var(--pos-x) var(--pos-y),
+      var(--color-1) var(--stop-1),
+      var(--color-2) var(--stop-2),
+      var(--color-3) var(--stop-3),
+      var(--color-4) var(--stop-4),
+      var(--color-5) var(--stop-5)
+    );
+    transition:
+      --pos-x 0.5s,
+      --pos-y 0.5s,
+      --spread-x 0.5s,
+      --spread-y 0.5s,
+      --color-1 0.5s,
+      --color-2 0.5s,
+      --color-3 0.5s,
+      --color-4 0.5s,
+      --color-5 0.5s,
+      --border-angle 0.5s,
+      --border-color-1 0.5s,
+      --border-color-2 0.5s,
+      --stop-1 0.5s,
+      --stop-2 0.5s,
+      --stop-3 0.5s,
+      --stop-4 0.5s,
+      --stop-5 0.5s;
+  }
+
+  .gradient-button::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    padding: 1px;
+    background: linear-gradient(
+      var(--border-angle),
+      var(--border-color-1),
+      var(--border-color-2)
+    );
+    mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    mask-composite: exclude;
+    pointer-events: none;
+  }
+
+  /* Основной стиль - классический немецкий флаг */
+  .gradient-button:hover {
+    --pos-x: 0%;
+    --pos-y: 91.51%;
+    --spread-x: 120.24%;
+    --spread-y: 103.18%;
+    --color-1: #000;
+    --color-2: #dc2626;
+    --color-3: #ef4444;
+    --color-4: #f59e0b;
+    --color-5: #fbbf24;
+    --border-angle: 190deg;
+    --border-color-1: hsla(0, 78%, 90%, 0.1);
+    --border-color-2: hsla(45, 95%, 90%, 0.6);
+    --stop-1: 0%;
+    --stop-2: 25%;
+    --stop-3: 50%;
+    --stop-4: 75%;
+    --stop-5: 100%;
+  }
+
+  /* Вариант для тёмной темы */
+  .gradient-button-variant {
+    --color-1: #000;
+    --color-2: #7c2d12;
+    --color-3: #dc2626;
+    --color-4: #f59e0b;
+    --color-5: #fcd34d;
+    --border-angle: 200deg;
+    --border-color-1: hsla(0, 75%, 90%, 0.6);
+    --border-color-2: hsla(45, 95%, 90%, 0.15);
+  }
+
+  .gradient-button-variant:hover {
+    --pos-x: 0%;
+    --pos-y: 95.51%;
+    --spread-x: 110.24%;
+    --spread-y: 110.2%;
+    --color-1: #fbbf24;
+    --color-2: #f59e0b;
+    --color-3: #dc2626;
+    --color-4: #7c2d12;
+    --color-5: #000;
+    --stop-1: 0%;
+    --stop-2: 20%;
+    --stop-3: 40%;
+    --stop-4: 70%;
+    --stop-5: 100%;
+    --border-angle: 210deg;
+    --border-color-1: hsla(45, 95%, 90%, 0.2);
+    --border-color-2: hsla(0, 75%, 90%, 0.75);
+  }
+
+  /* Золотой градиент */
+  .gradient-button-gold {
+    --color-1: #451a03;
+    --color-2: #7c2d12;
+    --color-3: #ea580c;
+    --color-4: #f59e0b;
+    --color-5: #fbbf24;
+    --border-angle: 45deg;
+    --border-color-1: hsla(45, 95%, 60%, 0.4);
+    --border-color-2: hsla(25, 95%, 50%, 0.6);
+  }
+
+  .gradient-button-gold:hover {
+    --pos-x: 50%;
+    --pos-y: 50%;
+    --spread-x: 200%;
+    --spread-y: 200%;
+    --color-1: #fbbf24;
+    --color-2: #f59e0b;
+    --color-3: #ea580c;
+    --color-4: #7c2d12;
+    --color-5: #451a03;
+    --border-angle: 225deg;
+    --border-color-1: hsla(45, 95%, 80%, 0.6);
+    --border-color-2: hsla(25, 95%, 70%, 0.8);
+  }
+
+  /* Красный градиент */
+  .gradient-button-red {
+    --color-1: #450a0a;
+    --color-2: #7f1d1d;
+    --color-3: #dc2626;
+    --color-4: #ef4444;
+    --color-5: #f87171;
+    --border-angle: 135deg;
+    --border-color-1: hsla(0, 75%, 60%, 0.4);
+    --border-color-2: hsla(0, 85%, 70%, 0.6);
+  }
+
+  .gradient-button-red:hover {
+    --pos-x: 100%;
+    --pos-y: 0%;
+    --spread-x: 150%;
+    --spread-y: 150%;
+    --color-1: #f87171;
+    --color-2: #ef4444;
+    --color-3: #dc2626;
+    --color-4: #7f1d1d;
+    --color-5: #450a0a;
+    --border-angle: 315deg;
+    --border-color-1: hsla(0, 85%, 80%, 0.6);
+    --border-color-2: hsla(0, 75%, 70%, 0.8);
+  }
+
+  /* Тёмная тема - фиолетово-розовые градиенты */
+  .dark .gradient-button {
+    --color-1: #1a0a2d !important; /* Тёмно-фиолетовый базовый */
+    --color-2: #4c1d4c !important; /* Фиолетово-розовый */
+    --color-3: #7c3aed !important; /* Яркий фиолетовый */
+    --color-4: #dc2626 !important; /* Немецкий красный */
+    --color-5: #e879f9 !important; /* Розовый акцент */
+    --border-color-1: hsla(300, 100%, 70%, 0.5) !important; /* Розовая граница */
+    --border-color-2: hsla(280, 100%, 70%, 0.8) !important; /* Фиолетовая граница */
+  }
+
+  .dark .gradient-button:hover {
+    --color-1: #2d1b3d !important; /* Тёмно-фиолетовый */
+    --color-2: #7c3aed !important; /* Яркий фиолетовый */
+    --color-3: #e879f9 !important; /* Розовый акцент */
+    --color-4: #dc2626 !important; /* Немецкий красный */
+    --color-5: #f0b7d8 !important; /* Светло-розовый */
+    --border-color-1: hsla(320, 100%, 75%, 0.4) !important; /* Яркий розовый */
+    --border-color-2: hsla(270, 100%, 80%, 0.7) !important; /* Светло-фиолетовый */
+  }
+
+  .dark .gradient-button-variant {
+    --color-1: #1a0a2d !important; /* Тёмно-фиолетовый */
+    --color-2: #6b21a8 !important; /* Глубокий фиолетовый */
+    --color-3: #a855f7 !important; /* Яркий фиолетовый */
+    --color-4: #e879f9 !important; /* Розово-фиолетовый */
+    --color-5: #f0b7d8 !important; /* Светло-розовый */
+    --border-color-1: hsla(280, 100%, 70%, 0.6) !important; /* Фиолетовая граница */
+    --border-color-2: hsla(320, 100%, 75%, 0.7) !important; /* Розовая граница */
+  }
+
+  .dark .gradient-button-variant:hover {
+    --color-1: #e879f9 !important; /* Розово-фиолетовый */
+    --color-2: #f0b7d8 !important; /* Светло-розовый */
+    --color-3: #a855f7 !important; /* Яркий фиолетовый */
+    --color-4: #6b21a8 !important; /* Глубокий фиолетовый */
+    --color-5: #1a0a2d !important; /* Тёмно-фиолетовый */
+    --border-color-1: hsla(300, 100%, 85%, 0.5) !important; /* Очень светло-розовый */
+    --border-color-2: hsla(280, 100%, 85%, 0.8) !important; /* Очень светло-фиолетовый */
+  }
+
+  .dark .gradient-button-gold {
+    --color-1: #2d1a0d !important; /* Тёмно-коричневый с розовым */
+    --color-2: #4c2d1a !important; /* Коричнево-золотой */
+    --color-3: #ea580c !important; /* Оранжево-золотой */
+    --color-4: #f59e0b !important; /* Немецкий золотой */
+    --color-5: #fcd34d !important; /* Светло-золотой */
+    --border-color-1: hsla(300, 100%, 70%, 0.3) !important; /* Розовый акцент */
+    --border-color-2: hsla(45, 95%, 70%, 0.7) !important;   /* Золотая граница */
+  }
+
+  .dark .gradient-button-gold:hover {
+    --color-1: #fcd34d !important; /* Светло-золотой */
+    --color-2: #f59e0b !important; /* Немецкий золотой */
+    --color-3: #ea580c !important; /* Оранжево-золотой */
+    --color-4: #e879f9 !important; /* Розовый акцент */
+    --color-5: #2d1a0d !important; /* Тёмная база */
+    --border-color-1: hsla(45, 95%, 90%, 0.8) !important;   /* Яркий золотой */
+    --border-color-2: hsla(320, 100%, 80%, 0.6) !important; /* Розовый акцент */
+  }
+
+  .dark .gradient-button-red {
+    --color-1: #2d1a1a; /* Тёмно-красный с розовым */
+    --color-2: #4c1d2d; /* Красно-розовый */
+    --color-3: #dc2626; /* Немецкий красный */
+    --color-4: #ef4444; /* Яркий красный */
+    --color-5: #f087b3; /* Розово-красный */
+    --border-color-1: hsla(0, 85%, 70%, 0.4);    /* Красная граница */
+    --border-color-2: hsla(300, 100%, 75%, 0.6); /* Розовая граница */
+  }
+
+  .dark .gradient-button-red:hover {
+    --color-1: #f087b3; /* Розово-красный */
+    --color-2: #ef4444; /* Яркий красный */
+    --color-3: #dc2626; /* Немецкий красный */
+    --color-4: #e879f9; /* Розово-фиолетовый */
+    --color-5: #2d1a1a; /* Тёмная база */
+    --border-color-1: hsla(320, 100%, 85%, 0.7); /* Яркий розовый */
+    --border-color-2: hsla(0, 85%, 85%, 0.8);    /* Светло-красный */
+  }
+
+  /* AI-Assistant специальный вариант */
+  .gradient-button-ai-assistant {
+    --color-1: #451a03; /* Тёмно-коричневый */
+    --color-2: #7c2d12; /* Коричнево-золотой */
+    --color-3: #ea580c; /* Оранжево-золотой */
+    --color-4: #f59e0b; /* Немецкий золотой */
+    --color-5: #fcd34d; /* Светло-золотой */
+    --border-angle: 135deg;
+    --border-color-1: hsla(45, 95%, 60%, 0.6); /* Золотая граница */
+    --border-color-2: hsla(25, 95%, 50%, 0.8); /* Оранжевая граница */
+  }
+
+  .gradient-button-ai-assistant:hover {
+    --pos-x: 50%;
+    --pos-y: 50%;
+    --spread-x: 180%;
+    --spread-y: 180%;
+    --color-1: #fcd34d; /* Светло-золотой */
+    --color-2: #f59e0b; /* Немецкий золотой */
+    --color-3: #ea580c; /* Оранжево-золотой */
+    --color-4: #7c2d12; /* Коричнево-золотой */
+    --color-5: #451a03; /* Тёмная база */
+    --border-angle: 315deg;
+    --border-color-1: hsla(45, 95%, 80%, 0.8); /* Яркий золотой */
+    --border-color-2: hsla(25, 95%, 70%, 0.9); /* Яркий оранжевый */
+  }
+
+  /* Тёмная тема - уникальный AI-помощник стиль */
+  .dark .gradient-button-ai-assistant {
+    --color-1: #1a0333 !important; /* Глубокий фиолетовый */
+    --color-2: #4c1d4c !important; /* Фиолетово-розовый базовый */
+    --color-3: #8b5cf6 !important; /* Яркий фиолетовый */
+    --color-4: #e879f9 !important; /* Розово-фиолетовый */
+    --color-5: #f0abfc !important; /* Светло-розовый */
+    --border-angle: 225deg !important;
+    --border-color-1: hsla(280, 100%, 70%, 0.7) !important; /* Фиолетовая граница */
+    --border-color-2: hsla(320, 100%, 80%, 0.8) !important; /* Розовая граница */
+  }
+
+  .dark .gradient-button-ai-assistant:hover {
+    --pos-x: 25% !important;
+    --pos-y: 75% !important;
+    --spread-x: 200% !important;
+    --spread-y: 200% !important;
+    --color-1: #f0abfc !important; /* Светло-розовый */
+    --color-2: #e879f9 !important; /* Розово-фиолетовый */
+    --color-3: #8b5cf6 !important; /* Яркий фиолетовый */
+    --color-4: #6b21a8 !important; /* Глубокий фиолетовый */
+    --color-5: #1a0333 !important; /* Глубокий фиолетовый база */
+    --border-angle: 45deg !important;
+    --border-color-1: hsla(320, 100%, 85%, 0.9) !important; /* Очень светло-розовый */
+    --border-color-2: hsla(280, 100%, 85%, 0.8) !important; /* Очень светло-фиолетовый */
+    --stop-1: 0% !important;
+    --stop-2: 25% !important;
+    --stop-3: 50% !important;
+    --stop-4: 75% !important;
+    --stop-5: 100% !important;
+  }
+
+  /* Минимальное постоянное свечение для AI-помощника */
+  @keyframes ai-glow-minimal {
+    0%, 100% {
+      box-shadow:
+        0 0 8px rgba(139, 92, 246, 0.15),
+        0 0 16px rgba(232, 121, 249, 0.1),
+        0 2px 8px rgba(0, 0, 0, 0.08);
+    }
+    50% {
+      box-shadow:
+        0 0 12px rgba(139, 92, 246, 0.2),
+        0 0 20px rgba(232, 121, 249, 0.15),
+        0 3px 10px rgba(0, 0, 0, 0.1);
+    }
+  }
+
+  .dark .gradient-button-ai-assistant {
+    animation: ai-glow-minimal 4s ease-in-out infinite;
+  }
+
+  /* Минимальное свечение для светлой темы AI-помощника */
+  @keyframes ai-glow-light-minimal {
+    0%, 100% {
+      box-shadow:
+        0 0 8px rgba(245, 158, 11, 0.15),
+        0 0 16px rgba(234, 88, 12, 0.1),
+        0 2px 8px rgba(0, 0, 0, 0.08);
+    }
+    50% {
+      box-shadow:
+        0 0 12px rgba(245, 158, 11, 0.2),
+        0 0 20px rgba(234, 88, 12, 0.15),
+        0 3px 10px rgba(0, 0, 0, 0.1);
+    }
+  }
+
+  .gradient-button-ai-assistant {
+    animation: ai-glow-light-minimal 4s ease-in-out infinite;
+  }
+}

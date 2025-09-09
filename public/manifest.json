@@ -1,0 +1,47 @@
+{
+  "name": "YourDeutsch - Your German, Your Way",
+  "short_name": "YourDeutsch",
+  "description": "Персональная платформа изучения немецкого языка с ИИ-помощником",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#3b82f6",
+  "orientation": "portrait-primary",
+  "categories": ["education", "productivity"],
+  "lang": "ru",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    },
+    {
+      "src": "/favicon.ico",
+      "sizes": "48x48",
+      "type": "image/x-icon"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Словарь",
+      "short_name": "Словарь",
+      "description": "Умный немецко-русский словарь",
+      "url": "/dictionary",
+      "icons": [{ "src": "/favicon.svg", "sizes": "any" }]
+    },
+    {
+      "name": "Уроки",
+      "short_name": "Уроки",
+      "description": "Интерактивные уроки немецкого",
+      "url": "/lessons",
+      "icons": [{ "src": "/favicon.svg", "sizes": "any" }]
+    },
+    {
+      "name": "ИИ Чат",
+      "short_name": "Чат",
+      "description": "Общение с ИИ на немецком",
+      "url": "/chat",
+      "icons": [{ "src": "/favicon.svg", "sizes": "any" }]
+    }
+  ]
+}
