@@ -12,17 +12,21 @@ import {
   CheckCircle,
   AlertCircle,
   Send,
+  Shield,
+  UserCheck,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
 import { useUser } from "@/contexts/UserContext";
 import { userService } from "@/lib/user-service";
+
 interface AuthModalProps {
   isOpen: boolean;
   onClose: () => void;
   initialTab?: "login" | "register";
 }
+
 export function AuthModal({
   isOpen,
   onClose,
@@ -55,6 +59,7 @@ export function AuthModal({
   const emailInputRef = useRef<HTMLInputElement>(null);
   const nameInputRef = useRef<HTMLInputElement>(null);
   const { login, register, resetPassword, user } = useUser();
+
   // Автофокус на поля ввода
   useEffect(() => {
     if (isOpen) {
@@ -67,6 +72,7 @@ export function AuthModal({
       }, 300);
     }
   }, [isOpen, activeTab]);
+
   // Проверка статуса верификации
   useEffect(() => {
     let intervalId: NodeJS.Timeout;
@@ -83,23 +89,24 @@ export function AuthModal({
           );
           clearInterval(intervalId);
         }
-      }, 5000); // Проверяем каждые 5 секунд
+      }, 5000);
     }
     return () => {
       if (intervalId) clearInterval(intervalId);
     };
   }, [verificationStatus.needsVerification, verificationStatus.emailVerified]);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
     setSuccessMessage("");
     setIsLoading(true);
+
     try {
       if (activeTab === "login") {
         const result = await login(formData.email, formData.password);
         if (result.success) {
           setSuccessMessage("Вход выполнен успешно!");
-          // Проверяем, верифицирован ли email
           if (user && !user.emailVerified) {
             setVerificationStatus({
               needsVerification: true,
@@ -108,7 +115,6 @@ export function AuthModal({
               emailVerified: false,
             });
           } else {
-            // Закрываем модальное окно через небольшую задержку, чтобы показать сообщение об успехе
             setTimeout(() => {
               onClose();
               resetForm();
@@ -118,7 +124,6 @@ export function AuthModal({
           setError(result.error || "Ошибка входа");
         }
       } else {
-        // Валидация для регистрации
         if (formData.password !== formData.confirmPassword) {
           setError("Пароли не совпадают");
           setIsLoading(false);
@@ -134,6 +139,7 @@ export function AuthModal({
           setIsLoading(false);
           return;
         }
+
         const result = await register(
           formData.email,
           formData.password,
@@ -157,6 +163,7 @@ export function AuthModal({
       setIsLoading(false);
     }
   };
+
   const handleResetPassword = async () => {
     if (!formData.email) {
       setError("Введите email для сброса пароля");
@@ -165,6 +172,7 @@ export function AuthModal({
     setIsLoading(true);
     setError("");
     setSuccessMessage("");
+
     try {
       const result = await resetPassword(formData.email);
       if (result.success) {
@@ -177,6 +185,7 @@ export function AuthModal({
       setIsLoading(false);
     }
   };
+
   const handleResendVerification = async () => {
     setVerificationStatus((prev) => ({
       ...prev,
@@ -184,6 +193,7 @@ export function AuthModal({
     }));
     setError("");
     setSuccessMessage("");
+
     try {
       const result = await userService.resendVerificationEmail();
       if (result.success) {
@@ -210,6 +220,7 @@ export function AuthModal({
       }));
     }
   };
+
   const resetForm = () => {
     setFormData({
       name: "",
@@ -227,6 +238,7 @@ export function AuthModal({
       emailVerified: false,
     });
   };
+
   const handleTabChange = (tab: "login" | "register") => {
     setActiveTab(tab);
     setError("");
@@ -239,331 +251,406 @@ export function AuthModal({
       emailVerified: false,
     });
   };
+
   if (!isOpen) return null;
+
   return (
     <AnimatePresence>
       <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-        {/* Overlay */}
+        {/* Улучшенный блюр-оверлей */}
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          className="absolute inset-0 bg-black/50 backdrop-blur-sm"
+          className="absolute inset-0 bg-black/60 backdrop-blur-xl"
           onClick={onClose}
         />
-        {/* Modal */}
+
+        {/* Модальное окно с улучшенными анимациями */}
         <motion.div
-          initial={{ opacity: 0, scale: 0.95, y: 20 }}
+          initial={{ opacity: 0, scale: 0.9, y: 20 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
-          exit={{ opacity: 0, scale: 0.95, y: 20 }}
-          transition={{ type: "spring", duration: 0.3 }}
-          className="relative w-full max-w-md mx-auto"
+          exit={{ opacity: 0, scale: 0.9, y: 20 }}
+          transition={{
+            type: "spring",
+            damping: 25,
+            stiffness: 300,
+            duration: 0.4
+          }}
+          className="relative w-full max-w-lg mx-auto"
         >
-          <Card className="glass-card bg-gradient-to-br from-white/10 to-white/5 border-2 border-white/20 backdrop-blur-xl">
-            {/* Header */}
-            <div className="flex items-center justify-between p-6 border-b border-white/10">
-              <div className="flex items-center space-x-4">
-                <div className="glass p-2 bg-gradient-to-br from-german-red/20 to-german-gold/20 rounded-xl dark:from-dark-theme-purple/30 dark:to-dark-theme-pink/30">
-                  <User className="h-5 w-5 text-german-red dark:text-dark-theme-pink" />
+          {/* Градиентная рамка */}
+          <div className="relative p-1 rounded-3xl bg-gradient-to-br from-white/20 via-white/10 to-white/5 dark:from-purple-500/20 dark:via-pink-500/10 dark:to-purple-500/5">
+            <Card className="relative bg-white/10 dark:bg-black/20 backdrop-blur-2xl border-0 rounded-[calc(1.5rem-4px)] shadow-2xl overflow-hidden">
+              {/* Декоративные элементы */}
+              <div className="absolute top-0 left-0 w-full h-full opacity-30">
+                <div className="absolute top-10 right-10 w-32 h-32 bg-gradient-to-br from-red-500/20 to-yellow-500/20 dark:from-purple-500/20 dark:to-pink-500/20 rounded-full blur-3xl" />
+                <div className="absolute bottom-10 left-10 w-40 h-40 bg-gradient-to-tr from-yellow-500/15 to-red-500/15 dark:from-pink-500/15 dark:to-purple-500/15 rounded-full blur-3xl" />
+              </div>
+
+              {/* Заголовок */}
+              <div className="relative p-8 pb-6">
+                <div className="flex items-center justify-between mb-6">
+                  <motion.div
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: 0.1 }}
+                    className="flex items-center space-x-4"
+                  >
+                    <div className="p-3 rounded-2xl bg-gradient-to-br from-red-500/20 to-yellow-500/20 dark:from-purple-500/20 dark:to-pink-500/20 backdrop-blur-xl border border-white/20">
+                      {activeTab === "login" ? (
+                        <Shield className="h-6 w-6 text-red-600 dark:text-purple-400" />
+                      ) : (
+                        <UserCheck className="h-6 w-6 text-red-600 dark:text-purple-400" />
+                      )}
+                    </div>
+                    <div>
+                      <h2 className="text-2xl font-bold bg-gradient-to-r from-gray-900 to-red-600 dark:from-white dark:to-purple-300 bg-clip-text text-transparent">
+                        {activeTab === "login" ? "Добро пожаловать" : "Создать аккаунт"}
+                      </h2>
+                      <p className="text-sm text-gray-600 dark:text-gray-300 mt-1">
+                        {activeTab === "login"
+                          ? "Войдите в свой аккаунт"
+                          : "Начните изучение немецкого"
+                        }
+                      </p>
+                    </div>
+                  </motion.div>
+
+                  <motion.button
+                    initial={{ opacity: 0, scale: 0.8 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ delay: 0.2 }}
+                    onClick={onClose}
+                    className="p-2 rounded-xl hover:bg-white/10 dark:hover:bg-white/5 transition-all duration-200 backdrop-blur-sm border border-white/10"
+                  >
+                    <X className="h-5 w-5 text-gray-600 dark:text-gray-300" />
+                  </motion.button>
                 </div>
-                <h2 className="text-xl font-bold gradient-text">
-                  {activeTab === "login"
-                    ? "Войти в аккаунт"
-                    : "Создать аккаунт"}
-                </h2>
-              </div>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={onClose}
-                className="glass text-muted-foreground hover:text-foreground hover:bg-white/80 dark:hover:bg-black/30"
-              >
-                <X className="h-5 w-5" />
-              </Button>
-            </div>
-            <div className="p-6">
-              {/* Tabs */}
-              <div className="flex glass rounded-lg p-1 mb-6">
-                <button
-                  onClick={() => handleTabChange("login")}
-                  className={`flex-1 py-2 px-4 text-sm font-medium rounded-md transition-all ${
-                    activeTab === "login"
-                      ? "bg-gradient-to-r from-german-red/20 to-german-gold/20 text-german-red dark:from-dark-theme-purple/20 dark:to-dark-theme-pink/20 dark:text-dark-theme-pink"
-                      : "text-muted-foreground hover:text-foreground"
-                  }`}
-                >
-                  Вход
-                </button>
-                <button
-                  onClick={() => handleTabChange("register")}
-                  className={`flex-1 py-2 px-4 text-sm font-medium rounded-md transition-all ${
-                    activeTab === "register"
-                      ? "bg-gradient-to-r from-german-red/20 to-german-gold/20 text-german-red dark:from-dark-theme-purple/20 dark:to-dark-theme-pink/20 dark:text-dark-theme-pink"
-                      : "text-muted-foreground hover:text-foreground"
-                  }`}
-                >
-                  Регистрация
-                </button>
-              </div>
-              {/* Email Verification */}
-              {verificationStatus.needsVerification && (
+
+                {/* Вкладки с улучшенным дизайном */}
                 <motion.div
-                  initial={{ opacity: 0, y: -10 }}
+                  initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
-                  className={`mb-4 p-3 glass rounded-lg border ${
-                    verificationStatus.emailVerified
-                      ? "border-green-500/20 bg-green-500/10"
-                      : "border-german-red/20 bg-german-red/10 dark:border-pink-500/20 dark:bg-pink-500/10"
-                  }`}
+                  transition={{ delay: 0.2 }}
+                  className="relative p-1 rounded-2xl bg-white/10 dark:bg-white/5 backdrop-blur-xl border border-white/20"
                 >
-                  {verificationStatus.emailVerified ? (
-                    <div className="flex items-center space-x-2">
-                      <CheckCircle className="w-5 h-5 text-green-400" />
-                      <p className="text-sm text-green-400">
-                        Email подтвержден! Спасибо за верификацию.
-                      </p>
-                    </div>
-                  ) : (
-                    <div className="space-y-2">
-                      <div className="flex items-center space-x-2">
-                        <AlertCircle className="w-5 h-5 text-german-red dark:text-pink-400" />
-                        <p className="text-sm text-german-red dark:text-pink-400">
-                          Для продолжения, пожалуйста, подтвердите ваш email.
-                        </p>
+                  <div className="relative flex">
+                    <motion.div
+                      className="absolute top-0 bottom-0 left-0 bg-gradient-to-r from-red-500/20 to-yellow-500/20 dark:from-purple-500/20 dark:to-pink-500/20 rounded-xl backdrop-blur-xl border border-white/30"
+                      initial={false}
+                      animate={{
+                        x: activeTab === "login" ? 0 : "100%",
+                        width: "50%",
+                      }}
+                      transition={{ type: "spring", damping: 20, stiffness: 300 }}
+                    />
+                    <button
+                      onClick={() => handleTabChange("login")}
+                      className={`relative flex-1 py-3 px-6 text-sm font-semibold rounded-xl transition-all duration-200 ${
+                        activeTab === "login"
+                          ? "text-red-700 dark:text-purple-200"
+                          : "text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200"
+                      }`}
+                    >
+                      Вход
+                    </button>
+                    <button
+                      onClick={() => handleTabChange("register")}
+                      className={`relative flex-1 py-3 px-6 text-sm font-semibold rounded-xl transition-all duration-200 ${
+                        activeTab === "register"
+                          ? "text-red-700 dark:text-purple-200"
+                          : "text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200"
+                      }`}
+                    >
+                      Регистрация
+                    </button>
+                  </div>
+                </motion.div>
+              </div>
+
+              {/* Контент */}
+              <div className="relative px-8 pb-8">
+                {/* Уведомления */}
+                <AnimatePresence mode="wait">
+                  {verificationStatus.needsVerification && (
+                    <motion.div
+                      initial={{ opacity: 0, height: 0, marginBottom: 0 }}
+                      animate={{ opacity: 1, height: "auto", marginBottom: 16 }}
+                      exit={{ opacity: 0, height: 0, marginBottom: 0 }}
+                      className="overflow-hidden"
+                    >
+                      <div className={`p-4 rounded-2xl backdrop-blur-xl border ${
+                        verificationStatus.emailVerified
+                          ? "bg-green-500/10 border-green-500/20"
+                          : "bg-orange-500/10 border-orange-500/20"
+                      }`}>
+                        {verificationStatus.emailVerified ? (
+                          <div className="flex items-center space-x-3">
+                            <CheckCircle className="w-5 h-5 text-green-400" />
+                            <p className="text-sm text-green-300">
+                              Email подтвержден! Добро пожаловать на платформу.
+                            </p>
+                          </div>
+                        ) : (
+                          <div className="space-y-3">
+                            <div className="flex items-center space-x-3">
+                              <AlertCircle className="w-5 h-5 text-orange-400" />
+                              <p className="text-sm text-orange-300">
+                                Подтвердите ваш email для доступа ко всем функциям
+                              </p>
+                            </div>
+                            <p className="text-xs text-orange-300/80 ml-8">
+                              Письмо отправлено на {formData.email}
+                            </p>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={handleResendVerification}
+                              disabled={verificationStatus.verificationEmailSending}
+                              className="ml-8 text-orange-300 hover:text-orange-200 h-8 px-3"
+                            >
+                              {verificationStatus.verificationEmailSending ? (
+                                <>
+                                  <Loader2 className="w-3 h-3 mr-2 animate-spin" />
+                                  Отправка...
+                                </>
+                              ) : (
+                                <>
+                                  <Send className="w-3 h-3 mr-2" />
+                                  Отправить повторно
+                                </>
+                              )}
+                            </Button>
+                          </div>
+                        )}
                       </div>
-                      <p className="text-xs text-german-red/80 dark:text-pink-400/80">
-                        Мы отправили письмо на {formData.email}. Пожалуйста,
-                        проверьте папку "Входящие" или "Спам".
-                      </p>
-                      <div className="pt-1">
-                        <Button
-                          type="button"
-                          variant="ghost"
-                          size="sm"
-                          onClick={handleResendVerification}
-                          disabled={verificationStatus.verificationEmailSending}
-                          className="text-sm glass text-german-red hover:text-german-dark-red dark:text-pink-300 dark:hover:text-pink-400"
-                        >
-                          {verificationStatus.verificationEmailSending ? (
-                            <>
-                              <Loader2 className="w-3 h-3 mr-2 animate-spin" />
-                              Отправка...
-                            </>
-                          ) : (
-                            <>
-                              <Send className="w-3 h-3 mr-2" />
-                              Отправить повторно
-                            </>
-                          )}
-                        </Button>
-                      </div>
-                    </div>
+                    </motion.div>
                   )}
-                </motion.div>
-              )}
-              {/* Reset Password Success */}
-              {resetEmailSent && (
-                <motion.div
-                  initial={{ opacity: 0, y: -10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  className="mb-4 p-3 glass rounded-lg border border-green-500/20 bg-green-500/10"
+
+                  {successMessage && !verificationStatus.needsVerification && (
+                    <motion.div
+                      initial={{ opacity: 0, height: 0, marginBottom: 0 }}
+                      animate={{ opacity: 1, height: "auto", marginBottom: 16 }}
+                      exit={{ opacity: 0, height: 0, marginBottom: 0 }}
+                      className="overflow-hidden"
+                    >
+                      <div className="p-4 rounded-2xl bg-green-500/10 border border-green-500/20 backdrop-blur-xl">
+                        <div className="flex items-center space-x-3">
+                          <CheckCircle className="w-5 h-5 text-green-400" />
+                          <p className="text-sm text-green-300">{successMessage}</p>
+                        </div>
+                      </div>
+                    </motion.div>
+                  )}
+
+                  {error && (
+                    <motion.div
+                      initial={{ opacity: 0, height: 0, marginBottom: 0 }}
+                      animate={{ opacity: 1, height: "auto", marginBottom: 16 }}
+                      exit={{ opacity: 0, height: 0, marginBottom: 0 }}
+                      className="overflow-hidden"
+                    >
+                      <div className="p-4 rounded-2xl bg-red-500/10 border border-red-500/20 backdrop-blur-xl">
+                        <div className="flex items-center space-x-3">
+                          <AlertCircle className="w-5 h-5 text-red-400" />
+                          <p className="text-sm text-red-300">{error}</p>
+                        </div>
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+
+                {/* Форма */}
+                <motion.form
+                  onSubmit={handleSubmit}
+                  className="space-y-5"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 0.3 }}
                 >
-                  <div className="flex items-center space-x-2">
-                    <CheckCircle className="w-5 h-5 text-green-400" />
-                    <p className="text-sm text-green-400">
-                      Письмо для сброса пароля отправлено на {formData.email}
-                    </p>
-                  </div>
-                </motion.div>
-              )}
-              {/* Success Message */}
-              {successMessage && !resetEmailSent && (
-                <motion.div
-                  initial={{ opacity: 0, y: -10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  className="mb-4 p-3 glass rounded-lg border border-green-500/20 bg-green-500/10"
-                >
-                  <div className="flex items-center space-x-2">
-                    <CheckCircle className="w-5 h-5 text-green-400" />
-                    <p className="text-sm text-green-400">{successMessage}</p>
-                  </div>
-                </motion.div>
-              )}
-              {/* Error Message */}
-              {error && (
-                <motion.div
-                  initial={{ opacity: 0, y: -10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  className="mb-4 p-3 glass rounded-lg border border-red-500/20 bg-red-500/10"
-                >
-                  <div className="flex items-center space-x-2">
-                    <AlertCircle className="w-5 h-5 text-red-400" />
-                    <p className="text-sm text-red-400">{error}</p>
-                  </div>
-                </motion.div>
-              )}
-              {/* Form */}
-              <form onSubmit={handleSubmit} className="space-y-4">
-                {/* Name field for registration */}
-                {activeTab === "register" && (
+                  {/* Поле имени для регистрации */}
+                  {activeTab === "register" && (
+                    <motion.div
+                      initial={{ opacity: 0, height: 0 }}
+                      animate={{ opacity: 1, height: "auto" }}
+                      exit={{ opacity: 0, height: 0 }}
+                      className="space-y-2"
+                    >
+                      <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                        Имя
+                      </label>
+                      <div className="relative">
+                        <User className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+                        <Input
+                          type="text"
+                          placeholder="Ваше имя"
+                          value={formData.name}
+                          onChange={(e) =>
+                            setFormData({ ...formData, name: e.target.value })
+                          }
+                          className="pl-12 h-12 bg-white/10 dark:bg-white/5 border border-white/20 rounded-xl backdrop-blur-xl text-gray-900 dark:text-gray-100 placeholder:text-gray-500 focus:border-red-500/50 dark:focus:border-purple-500/50 focus:ring-0"
+                          ref={nameInputRef}
+                          required
+                        />
+                      </div>
+                    </motion.div>
+                  )}
+
+                  {/* Email поле */}
                   <div className="space-y-2">
-                    <label className="text-sm font-medium text-foreground">
-                      Имя
+                    <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                      Email
                     </label>
                     <div className="relative">
-                      <User className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                      <Mail className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
                       <Input
-                        type="text"
-                        placeholder="Ваше имя"
-                        value={formData.name}
+                        type="email"
+                        placeholder="your@email.com"
+                        value={formData.email}
                         onChange={(e) =>
-                          setFormData({ ...formData, name: e.target.value })
+                          setFormData({ ...formData, email: e.target.value })
                         }
-                        className="pl-10 glass bg-white/5 border-white/20 focus:border-german-red/50 dark:focus:border-dark-theme-pink/50"
-                        ref={nameInputRef}
+                        className="pl-12 h-12 bg-white/10 dark:bg-white/5 border border-white/20 rounded-xl backdrop-blur-xl text-gray-900 dark:text-gray-100 placeholder:text-gray-500 focus:border-red-500/50 dark:focus:border-purple-500/50 focus:ring-0"
+                        ref={emailInputRef}
                         required
                       />
                     </div>
                   </div>
-                )}
-                {/* Email field */}
-                <div className="space-y-2">
-                  <label className="text-sm font-medium text-foreground">
-                    Email
-                  </label>
-                  <div className="relative">
-                    <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                    <Input
-                      type="email"
-                      placeholder="your@email.com"
-                      value={formData.email}
-                      onChange={(e) =>
-                        setFormData({ ...formData, email: e.target.value })
-                      }
-                      className="pl-10 glass bg-white/5 border-white/20 focus:border-german-red/50 dark:focus:border-dark-theme-pink/50"
-                      ref={emailInputRef}
-                      required
-                    />
-                  </div>
-                </div>
-                {/* Password field */}
-                <div className="space-y-2">
-                  <label className="text-sm font-medium text-foreground">
-                    Пароль
-                  </label>
-                  <div className="relative">
-                    <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                    <Input
-                      type={showPassword ? "text" : "password"}
-                      placeholder="••••••••"
-                      value={formData.password}
-                      onChange={(e) =>
-                        setFormData({ ...formData, password: e.target.value })
-                      }
-                      className="pl-10 pr-10 glass bg-white/5 border-white/20 focus:border-german-red/50 dark:focus:border-dark-theme-pink/50"
-                      required
-                    />
-                    <button
-                      type="button"
-                      onClick={() => setShowPassword(!showPassword)}
-                      className="absolute right-3 top-1/2 transform -translate-y-1/2 text-muted-foreground hover:text-foreground"
-                    >
-                      {showPassword ? (
-                        <EyeOff className="h-4 w-4" />
-                      ) : (
-                        <Eye className="h-4 w-4" />
-                      )}
-                    </button>
-                  </div>
-                </div>
-                {/* Confirm Password field for registration */}
-                {activeTab === "register" && (
+
+                  {/* Поле пароля */}
                   <div className="space-y-2">
-                    <label className="text-sm font-medium text-foreground">
-                      Подтвердите пароль
+                    <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                      Пароль
                     </label>
                     <div className="relative">
-                      <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                      <Lock className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
                       <Input
-                        type={showConfirmPassword ? "text" : "password"}
+                        type={showPassword ? "text" : "password"}
                         placeholder="••••••••"
-                        value={formData.confirmPassword}
+                        value={formData.password}
                         onChange={(e) =>
-                          setFormData({
-                            ...formData,
-                            confirmPassword: e.target.value,
-                          })
+                          setFormData({ ...formData, password: e.target.value })
                         }
-                        className="pl-10 pr-10 glass bg-white/5 border-white/20 focus:border-german-red/50 dark:focus:border-dark-theme-pink/50"
+                        className="pl-12 pr-12 h-12 bg-white/10 dark:bg-white/5 border border-white/20 rounded-xl backdrop-blur-xl text-gray-900 dark:text-gray-100 placeholder:text-gray-500 focus:border-red-500/50 dark:focus:border-purple-500/50 focus:ring-0"
                         required
                       />
                       <button
                         type="button"
-                        onClick={() =>
-                          setShowConfirmPassword(!showConfirmPassword)
-                        }
-                        className="absolute right-3 top-1/2 transform -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                        onClick={() => setShowPassword(!showPassword)}
+                        className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 transition-colors"
                       >
-                        {showConfirmPassword ? (
-                          <EyeOff className="h-4 w-4" />
+                        {showPassword ? (
+                          <EyeOff className="h-5 w-5" />
                         ) : (
-                          <Eye className="h-4 w-4" />
+                          <Eye className="h-5 w-5" />
                         )}
                       </button>
                     </div>
                   </div>
-                )}
-                {/* Forgot Password link for login */}
-                {activeTab === "login" && (
-                  <div className="text-right">
-                    <button
-                      type="button"
-                      onClick={handleResetPassword}
-                      className="text-sm text-german-red dark:text-dark-theme-pink hover:text-german-dark-red dark:hover:text-dark-theme-purple transition-colors"
-                      disabled={isLoading}
+
+                  {/* Подтверждение пароля для регистрации */}
+                  {activeTab === "register" && (
+                    <motion.div
+                      initial={{ opacity: 0, height: 0 }}
+                      animate={{ opacity: 1, height: "auto" }}
+                      exit={{ opacity: 0, height: 0 }}
+                      className="space-y-2"
                     >
-                      Забыли пароль?
-                    </button>
-                  </div>
-                )}
-                {/* Submit Button */}
-                <Button
-                  type="submit"
-                  className="w-full glass bg-gradient-to-r from-german-red/20 to-german-gold/20 hover:bg-white/80 dark:hover:bg-black/30 text-german-red dark:text-dark-theme-pink border border-german-red/30 dark:border-dark-theme-pink/30"
-                  disabled={isLoading || verificationStatus.needsVerification}
-                >
-                  {isLoading ? (
-                    <>
-                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                      {activeTab === "login" ? "Вход..." : "Регистрация..."}
-                    </>
-                  ) : activeTab === "login" ? (
-                    "Войти"
-                  ) : (
-                    "Создать аккаунт"
+                      <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                        Подтвердите пароль
+                      </label>
+                      <div className="relative">
+                        <Lock className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+                        <Input
+                          type={showConfirmPassword ? "text" : "password"}
+                          placeholder="••••••••"
+                          value={formData.confirmPassword}
+                          onChange={(e) =>
+                            setFormData({
+                              ...formData,
+                              confirmPassword: e.target.value,
+                            })
+                          }
+                          className="pl-12 pr-12 h-12 bg-white/10 dark:bg-white/5 border border-white/20 rounded-xl backdrop-blur-xl text-gray-900 dark:text-gray-100 placeholder:text-gray-500 focus:border-red-500/50 dark:focus:border-purple-500/50 focus:ring-0"
+                          required
+                        />
+                        <button
+                          type="button"
+                          onClick={() =>
+                            setShowConfirmPassword(!showConfirmPassword)
+                          }
+                          className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 transition-colors"
+                        >
+                          {showConfirmPassword ? (
+                            <EyeOff className="h-5 w-5" />
+                          ) : (
+                            <Eye className="h-5 w-5" />
+                          )}
+                        </button>
+                      </div>
+                    </motion.div>
                   )}
-                </Button>
-              </form>
-              {/* Additional Info */}
-              <div className="mt-6 text-center">
-                <p className="text-xs text-muted-foreground">
-                  {activeTab === "login"
-                    ? "Нет аккаунта? "
-                    : "Уже есть аккаунт? "}
-                  <button
-                    onClick={() =>
-                      handleTabChange(
-                        activeTab === "login" ? "register" : "login",
-                      )
-                    }
-                    className="text-german-red dark:text-dark-theme-pink hover:text-german-dark-red dark:hover:text-dark-theme-purple transition-colors font-medium"
+
+                  {/* Забыли пароль для входа */}
+                  {activeTab === "login" && (
+                    <div className="text-right">
+                      <button
+                        type="button"
+                        onClick={handleResetPassword}
+                        className="text-sm text-red-600 dark:text-purple-400 hover:text-red-700 dark:hover:text-purple-300 transition-colors font-medium"
+                        disabled={isLoading}
+                      >
+                        Забыли пароль?
+                      </button>
+                    </div>
+                  )}
+
+                  {/* Кнопка отправки */}
+                  <Button
+                    type="submit"
+                    className="w-full h-12 rounded-xl font-semibold text-white bg-gradient-to-r from-red-600 to-red-500 dark:from-purple-600 dark:to-pink-600 hover:from-red-700 hover:to-red-600 dark:hover:from-purple-700 dark:hover:to-pink-700 border-0 shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-[1.02]"
+                    disabled={isLoading || verificationStatus.needsVerification}
                   >
-                    {activeTab === "login" ? "Зарегистрируйтесь" : "Войдите"}
-                  </button>
-                </p>
+                    {isLoading ? (
+                      <>
+                        <Loader2 className="w-5 h-5 mr-3 animate-spin" />
+                        {activeTab === "login" ? "Вход..." : "Регистрация..."}
+                      </>
+                    ) : activeTab === "login" ? (
+                      "Войти в аккаунт"
+                    ) : (
+                      "Создать аккаунт"
+                    )}
+                  </Button>
+                </motion.form>
+
+                {/* Дополнительная информация */}
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 0.4 }}
+                  className="mt-6 text-center"
+                >
+                  <p className="text-sm text-gray-600 dark:text-gray-400">
+                    {activeTab === "login"
+                      ? "Нет аккаунта? "
+                      : "Уже есть аккаунт? "}
+                    <button
+                      onClick={() =>
+                        handleTabChange(
+                          activeTab === "login" ? "register" : "login",
+                        )
+                      }
+                      className="text-red-600 dark:text-purple-400 hover:text-red-700 dark:hover:text-purple-300 transition-colors font-semibold"
+                    >
+                      {activeTab === "login" ? "Зарегистрируйтесь" : "Войдите"}
+                    </button>
+                  </p>
+                </motion.div>
               </div>
-            </div>
-          </Card>
+            </Card>
+          </div>
         </motion.div>
       </div>
     </AnimatePresence>

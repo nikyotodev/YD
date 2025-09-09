@@ -4,7 +4,7 @@ import { Menu, X, User, LogOut, Settings, Trophy, LogIn, Home, BookOpen, MapPin,
 import { useState, useCallback, useMemo, useRef, useEffect } from "react";
 import Link from "next/link";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
-import { AuthModal } from "@/components/AuthModal";
+import { useAuthModal } from "@/contexts/AuthModalContext";
 import { useUser } from "@/contexts/UserContext";
 import Image from "next/image";
 interface NavItem {
@@ -15,13 +15,10 @@ interface NavItem {
 }
 export function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
-  const [authModalTab, setAuthModalTab] = useState<"login" | "register">(
-    "login",
-  );
   const [showUserMenu, setShowUserMenu] = useState(false);
   const userMenuRef = useRef<HTMLDivElement>(null);
   const { user, isAuthenticated, logout } = useUser();
+  const { openAuthModal } = useAuthModal();
   // Закрытие меню при клике вне его области
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -80,18 +77,7 @@ export function Header() {
   const closeMenu = useCallback(() => {
     setIsMenuOpen(false);
   }, []);
-  const openAuthModal = useCallback((tab: "login" | "register") => {
-    // Решаем, использовать ли навигацию на страницу или открывать модальное окно
-    // В данном случае используем навигацию на страницу
-    if (tab === "login") {
-      window.location.href = "/auth";
-    } else {
-      window.location.href = "/auth/register";
-    }
-    // Закомментировано: открытие модального окна
-    // setAuthModalTab(tab)
-    // setIsAuthModalOpen(true)
-  }, []);
+
   const handleLogout = useCallback(async () => {
     await logout();
     setShowUserMenu(false);
@@ -309,7 +295,7 @@ export function Header() {
                     variant="ghost"
                     size="sm"
                     onClick={() => {
-                      window.location.href = "/auth";
+                      openAuthModal("login");
                       closeMenu();
                     }}
                     className="w-full glass glass-hover text-muted-foreground"
@@ -321,7 +307,7 @@ export function Header() {
                     variant="german"
                     size="sm"
                     onClick={() => {
-                      window.location.href = "/auth/register";
+                      openAuthModal("register");
                       closeMenu();
                     }}
                     className="w-full"
@@ -334,12 +320,7 @@ export function Header() {
           </nav>
         </div>
       )}
-      {/* Auth Modal */}
-      <AuthModal
-        isOpen={isAuthModalOpen}
-        onClose={() => setIsAuthModalOpen(false)}
-        initialTab={authModalTab}
-      />
+
     </header>
   );
 }
