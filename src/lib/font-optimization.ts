@@ -3,45 +3,14 @@ import React from 'react';
 // Preload критических шрифтов
 export function preloadFonts(): void {
   if (typeof document === 'undefined') return;
-  const fontsToPreload = [
-    {
-      href: '/_next/static/media/geist-sans.woff2',
-      type: 'font/woff2',
-      crossOrigin: 'anonymous',
-    },
-    {
-      href: '/_next/static/media/geist-mono.woff2',
-      type: 'font/woff2',
-      crossOrigin: 'anonymous',
-    },
-  ];
-  for (const { href, type, crossOrigin } of fontsToPreload) {
-    const link = document.createElement('link');
-    link.rel = 'preload';
-    link.as = 'font';
-    link.href = href;
-    link.type = type;
-    link.crossOrigin = crossOrigin;
-    document.head.appendChild(link);
-  }
+  // Google Fonts уже загружаются через Next.js в layout.tsx
+  // Дополнительный preload не нужен, так как Next.js оптимизирует это автоматически
 }
 // Font display optimization
 export function optimizeFontDisplay(): void {
   if (typeof document === 'undefined') return;
-  const style = document.createElement('style');
-  style.textContent = `
-    @font-face {
-      font-family: 'Geist Sans';
-      font-display: swap;
-      src: url('/_next/static/media/geist-sans.woff2') format('woff2');
-    }
-    @font-face {
-      font-family: 'Geist Mono';
-      font-display: swap;
-      src: url('/_next/static/media/geist-mono.woff2') format('woff2');
-    }
-  `;
-  document.head.appendChild(style);
+  // Google Fonts уже оптимизированы через Next.js font optimization в layout.tsx
+  // font-display: swap уже установлен в конфигурации шрифтов
 }
 // Font loading observer
 const loadedFonts = new Set<string>();
@@ -114,30 +83,13 @@ export function getOptimalFontStrategy(): 'swap' | 'block' | 'fallback' {
 const CYRILLIC_RANGE = 'U+0400-045F,U+0490-0491,U+04B0-04B1,U+2116';
 const LATIN_RANGE = 'U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+2000-206F,U+2074,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD';
 export function generateFontCSS(fontFamily: string, weight: number | string = 400): string {
-  const strategy = getOptimalFontStrategy();
-  return `
-    @font-face {
-      font-family: '${fontFamily}';
-      font-style: normal;
-      font-weight: ${weight};
-      font-display: ${strategy};
-      src: url('/_next/static/media/${fontFamily.toLowerCase().replace(' ', '-')}.woff2') format('woff2');
-      unicode-range: ${LATIN_RANGE}, ${CYRILLIC_RANGE};
-    }
-  `;
+  // Google Fonts через Next.js уже оптимизированы, дополнительные @font-face не нужны
+  return '';
 }
 export function injectOptimizedFonts(): void {
   if (typeof document === 'undefined') return;
-  const fonts = [
-    { family: 'Geist Sans', weights: [400, 500, 600, 700] },
-    { family: 'Geist Mono', weights: [400, 500] },
-  ];
-  const css = fonts.map(({ family, weights }) =>
-    weights.map(weight => generateFontCSS(family, weight)).join('\n')
-  ).join('\n');
-  const style = document.createElement('style');
-  style.textContent = css;
-  document.head.appendChild(style);
+  // Google Fonts через Next.js уже оптимизированы и вставлены
+  // Дополнительная инъекция стилей не требуется
 }
 // Critical CSS для шрифтов
 export const CRITICAL_FONT_CSS = `
